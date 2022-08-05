@@ -19,56 +19,22 @@ public class JavaStreamSandbox {
         List<Person> shuffledPersonList = personList;
         Collections.shuffle(shuffledPersonList);
         // Step 3. Key-value pairs for 2 entries
-        System.out.println("Step 3. Key-value pairs for 2 entries");
+        System.out.println("Step 3. (Non-unique) Key-value pair of 2 entries");
         System.out.println("---------------");
         String delimiter = " - ";
-        pairs(personList.stream()).forEach(obj -> {
+        nonUniquePairs(personList.stream()).forEach(obj -> {
             System.out.print(obj.stream().map(Person::toString).collect(Collectors.joining(delimiter)));
             System.out.println();
         });
         // Step 3. Key-value pairs for 2 unique entries
         System.out.println("---------------"); 
-        System.out.println("Step 3. Key-value pairs for 2 unique entries");
+        System.out.println("Step 3. (Unique) Key-value pair of 2 entries");
         System.out.println("---------------");
         uniquePairs(personList.stream()).forEach(obj -> {
             System.out.print(obj.stream().map(Person::toString).collect(Collectors.joining(delimiter)));
             System.out.println();
         });
 
-    }
-
-    public static <T> Stream<List<T>> pairs(Stream<T> stream) {
-        Iterator<T> iterator = stream.iterator();
-        if (iterator.hasNext()) {
-            T first = iterator.next();
-            if (iterator.hasNext()) {
-                return Stream.iterate(List.of(first, iterator.next()),prev -> iterator.hasNext() ? List.of(prev.get(1), iterator.next()) : null).takeWhile(prev -> prev != null);
-            }
-        }
-        return Stream.empty();
-    }
-
-    public static <T> Iterator<List<T>> paired(Iterator<T> iterator) {
-        return new Iterator<List<T>>() {
-            @Override
-            public boolean hasNext() {
-                return iterator.hasNext();
-            }
-
-            @Override
-            public List<T> next() {
-                T first = iterator.next();
-                if (iterator.hasNext()) {
-                    return Arrays.asList(first, iterator.next());
-                } else {
-                    return Collections.singletonList(first);
-                }
-            }
-        };
-    }
-
-    public static <T> Stream<List<T>> uniquePairs(Stream<T> stream) {
-        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(paired(stream.iterator()), Spliterator.ORDERED),false);
     }
 
     public static List<Person> readCSV(){
@@ -93,4 +59,40 @@ public class JavaStreamSandbox {
         }
         return personList;
     }
+
+    public static <T> Stream<List<T>> nonUniquePairs(Stream<T> stream) {
+        Iterator<T> iterator = stream.iterator();
+        if (iterator.hasNext()) {
+            T first = iterator.next();
+            if (iterator.hasNext()) {
+                return Stream.iterate(List.of(first, iterator.next()),prev -> iterator.hasNext() ? List.of(prev.get(1), iterator.next()) : null).takeWhile(prev -> prev != null);
+            }
+        }
+        return Stream.empty();
+    }
+
+    public static <T> Stream<List<T>> uniquePairs(Stream<T> stream) {
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(helper(stream.iterator()), Spliterator.ORDERED),false);
+    }
+
+    public static <T> Iterator<List<T>> helper(Iterator<T> iterator) {
+        return new Iterator<List<T>>() {
+            @Override
+            public boolean hasNext() {
+                return iterator.hasNext();
+            }
+
+            @Override
+            public List<T> next() {
+                T first = iterator.next();
+                if (iterator.hasNext()) {
+                    return Arrays.asList(first, iterator.next());
+                } else {
+                    return Collections.singletonList(first);
+                }
+            }
+        };
+    }
+
+
 }
