@@ -22,19 +22,12 @@ public class JavaStreamSandbox {
         System.out.println("Step 3. (Non-unique) Key-value pair of 2 entries");
         System.out.println("---------------");
         String delimiter = " - ";
-        nonUniquePairs(personList.stream()).forEach(obj -> {
-            System.out.print(obj.stream().map(Person::toString).collect(Collectors.joining(delimiter)));
-            System.out.println();
-        });
+        nonUniquePairs(personList.stream()).forEach(obj -> System.out.println(obj.stream().map(Person::toString).collect(Collectors.joining(delimiter))));
         // Step 3. Key-value pairs for 2 unique entries
         System.out.println("---------------"); 
         System.out.println("Step 3. (Unique) Key-value pair of 2 entries");
         System.out.println("---------------");
-        uniquePairs(personList.stream()).forEach(obj -> {
-            System.out.print(obj.stream().map(Person::toString).collect(Collectors.joining(delimiter)));
-            System.out.println();
-        });
-
+        uniquePairs(personList.stream()).forEach(obj -> System.out.println(obj.stream().map(Person::toString).collect(Collectors.joining(delimiter))));
     }
 
     public static List<Person> readCSV(){
